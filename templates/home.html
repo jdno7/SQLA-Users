@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+
+<h1>Users</h1>
+    <ul>
+        {% for user in users %}
+
+            <li><a href="/{{user.id}}">{{user.first_name}} {{user.last_name}}</a></li>
+
+        {% endfor %}
+    </ul>
+
+<button id="add-button">Add User</button>
+
+<form id="add-user-form" method="POST">
+    <p >First:     <input required name="first_name"></p>
+    <p>Last:  <input required name="last_name"></p>
+    <p>Profile Image:   <input name="image_url"></p>
+
+<!-- <button>Cancel</button> -->
+<button id="create-button">Create User</button>
+</form>
+{% endblock %}
