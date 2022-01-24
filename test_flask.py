@@ -1,7 +1,8 @@
 from unittest import TestCase
 
 from app import app
-from models import db, User
+from models import db, User, Post
+from datetime import datetime
 
 # Use test database and don't clutter tests with SQL
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///blogly_db_test'
@@ -24,7 +25,7 @@ class UserViewsTestCase(TestCase):
 
         User.query.delete()
 
-        user = User(first_name="Test", last_name="User",)
+        user = User(first_name="Test", last_name="User")
         db.session.add(user)
         db.session.commit()
 
@@ -45,7 +46,7 @@ class UserViewsTestCase(TestCase):
 
     def test_user_detail(self):
         with app.test_client() as client:
-            resp = client.get(f"/{self.user_id}")
+            resp = client.get(f"/user/{self.user_id}")
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
@@ -53,7 +54,7 @@ class UserViewsTestCase(TestCase):
 
     def test_default_img(self):
         with app.test_client() as client:
-            resp = client.get(f"/{self.user_id}")
+            resp = client.get(f"/user/{self.user_id}")
             html = resp.get_data(as_text=True)
 
             self.assertEqual(resp.status_code, 200)
@@ -67,5 +68,68 @@ class UserViewsTestCase(TestCase):
 
             self.assertEqual(resp.status_code, 200)
             self.assertIn("<h1>Test2 User2</h1>", html)
+
+db.drop_all()
+db.create_all()
+
+class PostViewsTestCase(TestCase):
+    """Tests for views for Post."""
+
+    def setUp(self):
+        """Add sample User and Post."""
+
+        # Post.query.delete()
+        # User.query.delete()
+
+        user = User(first_name="Test", last_name="User",)
+        db.session.add(user)
+        db.session.commit()
+
+        self.user_id = user.id
+
+        
+        post = Post(title='testing', content='test content', created_at=datetime.utcnow(), user_id=user.id)
+        db.session.add(post)
+        db.session.commit()
+
+        self.post_id = post.id
+
+    def tearDown(self):
+        """Clean up any fouled transaction."""
+
+        db.session.rollback()
+
+    # def test_list_users(self):
+    #     with app.test_client() as client:
+    #         resp = client.get("/")
+    #         html = resp.get_data(as_text=True)
+
+    #         self.assertEqual(resp.status_code, 200)
+    #         self.assertIn('Users', html)
+
+    def test_user_detail(self):
+        with app.test_client() as client:
+            resp = client.get(f"/user/{self.user_id}")
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('testing', html)
+
+    def test_default_img(self):
+        with app.test_client() as client:
+            resp = client.get(f"/post/{self.post_id}")
+            html = resp.get_data(as_text=True)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('test content', html)
+
+    # def test_add_user(self):
+    #     with app.test_client() as client:
+    #         d = {"first_name": "Test2", "last_name": "User2", "image_url":""}
+    #         resp = client.post("/", data=d, follow_redirects=True)
+    #         html = resp.get_data(as_text=True)
+
+    #         self.assertEqual(resp.status_code, 200)
+    #         self.assertIn("<h1>Test2 User2</h1>", html)
 
     

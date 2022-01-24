@@ -18,5 +18,18 @@
 <button>Save</button>
 </form>
 
+<h2>POSTS</h2>
+{% for post in posts %}
+
+<ul>
+    <li> <a href="/post/{{post.id}}"> {{post.title}} </a> </li>
+</ul>
+
+
+
+{% endfor %}
+
+<a href="/user/{{user.id}}/add-post">Add</a>
+
 {% endblock %}
 
