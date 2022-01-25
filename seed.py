@@ -1,6 +1,6 @@
 """Seed file to make sample data for User and Post tables in db."""
 
-from models import User, Post, db
+from models import User, Post, Tag, PostTag, db
 from datetime import datetime
 from app import app
 
@@ -9,8 +9,11 @@ db.drop_all()
 db.create_all()
 
 # If table isn't empty, empty it
-User.query.delete()
-Post.query.delete()
+# User.query.delete()
+# Post.query.delete()
+# Tag.query.delete()
+# PostTag.query.delete()
+
 
 # Add Users
 JD = User(first_name='John', last_name="Hans")
@@ -43,3 +46,18 @@ db.session.add(p5)
 
 # Commit--otherwise, this never gets saved!
 db.session.commit()
+
+#Add Tags
+fun = Tag(name="FUN")
+fishing = Tag(name="Fishing")
+hungry = Tag(name="Hungry")
+weather = Tag(name="Weather")
+
+db.session.add(fun)
+db.session.add(fishing)
+db.session.add(hungry)
+db.session.add(weather)
+
+db.session.commit()
+
+# Add Post Tags
