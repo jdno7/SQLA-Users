@@ -9,6 +9,13 @@
 
 <i>By {{post.user.first_name}} {{post.user.last_name}}</i>
 <br>
+<p><strong>Tags:</strong>
+    {% for tag in post.p_tags %}
+      <span>
+          {{tag.name}}
+      </span>  
+    {% endfor %}
+</p>
 <br>
 <a href="/user/{{post.user.id}}">Back</a>
 <a href="/edit/{{post.id}}">Edit</a>

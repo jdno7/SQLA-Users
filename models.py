@@ -1,8 +1,9 @@
 '''Models for Blogly Exercise'''
 
+from tkinter import CASCADE
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
+from sqlalchemy.orm import configure_mappers
 from sqlalchemy import ForeignKey, PrimaryKeyConstraint 
 
 db = SQLAlchemy()
@@ -60,7 +61,7 @@ class Post(db.Model):
     user = db.relationship("User",
                             backref="user" )
 
-    p_tags = db.relationship("Tag", secondary="post_tags", backref="post")
+    # p_tags = db.relationship("Tag", secondary="post_tags", backref="post" )
     # append example
     # get post - p = Post.query.get(1)
     # get tag - t = Tag.query.get(1)
@@ -77,16 +78,20 @@ class Tag(db.Model):
 
     __tablename__ = 'tags'
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True,)
     name = db.Column(db.Text, unique=True, nullable=False)
 
-    posts = db.relationship("PostTag", backref="tag")
-
+    # posts = db.relationship("PostTag", backref="tag")
+    posts = db.relationship("Post", secondary="post_tags", backref="p_tags" )
     def __repr__(self):
 
         tag = self
 
         return f"<Tag {tag.id} {tag.name}>"
+
+  
+
+
 
 class PostTag(db.Model):
     """Posts with Tags"""
@@ -101,3 +106,7 @@ class PostTag(db.Model):
         pt = self
 
         return f"<{pt.post_id} {pt.tag_id}>"
+
+
+
+configure_mappers()
